@@ -1,7 +1,8 @@
 import type { NextPage } from 'next'
 import styles from '../styles/Home.module.css'
+import MainLayout from './../components/mainLayout';
 
-const Home: NextPage = () => {
+const IndexPage: NextPage = () => {
     // TODO: Pull out to separate API class
     const callTestAPI = async () => {
         try {
@@ -12,14 +13,15 @@ const Home: NextPage = () => {
             console.log(err);
         }
     };
-    
+
     return (
-        <div className={styles.container}>
-            <main className={styles.main}>
+        <MainLayout>
+            <div className={styles.container}>
+                <p>Simple testing test</p>
                 <button onClick={callTestAPI}>Make API call</button>
-            </main>
-        </div>
+            </div>
+        </MainLayout>
     );
 }
 
-export default Home
+export default IndexPage;
