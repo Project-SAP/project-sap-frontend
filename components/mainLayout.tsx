@@ -7,7 +7,7 @@ const MainLayout: NextPage = (props: PropsWithChildren) => {
     const style = {
         display: 'flex',
         flexDirection: 'column',
-        'min-height': '100vh'
+        minHeight: '100vh'
     };
 
     return (
