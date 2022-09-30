@@ -1,28 +1,43 @@
-import { render, screen } from "@testing-library/react";
+import { render, RenderResult, screen } from "@testing-library/react";
 import IndexPage from './../../pages/index';
 
+/**
+ * Example of testing for a page.
+ * Normally won't require so many comments as `describe` and `it` blocks should be self explanatory. 
+ */
 describe('index page', () => {
+    // Contains a container of rendered of page
+    let renderedPage: RenderResult;
 
     beforeEach(() => {
-        render(<IndexPage />);
+        renderedPage = render(<IndexPage />);
     });
 
+    // Bare bones test case. Simply validate that whole page is loaded.
     it('should successfully load', async () => {
         expect(screen).toBeTruthy();
     });
 
-    it('should have a header', () => {
-        // TODO: Search for header element
-        fail();
+    // Simply validate that components exists. Functionality should be tested within each component individually.
+    describe('when page is loaded', () => {
+        it('should have a header', () => {
+            const headerElement = renderedPage.container.getElementsByClassName('header')?.item(0);
+
+            expect(headerElement).toBeTruthy();
+        });
+
+        it('should have a footer', () => {
+            const footerElement = renderedPage.container.getElementsByClassName('footer')?.item(0);
+
+            expect(footerElement).toBeTruthy();
+        });
+
     });
 
-    it('should have a footer', () => {
-        // TODO: Search for footer element
-        fail();
-    });
-
-    it('should call api once button is pushed', () => {
-        // TODO: Mock frontend api calls
-        fail();
+    // Example of page specific functionality.
+    describe('when clicking on button', () => {
+        it('should call api', () => {
+            
+        });
     });
 });
