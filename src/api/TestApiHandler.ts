@@ -4,18 +4,31 @@ class TestApiHandler {
 
     /**
      * Generalized api call using `fetch`
-     * @param request Optional request body
+     * @param requestObject Optional request body
      * @returns Response object
+     * TODO: Probably move to generalized ApiHandler class
      */
-    async call(request?: Request): Promise<Response> {
-        let response: Response
+    async call(requestObject?: any): Promise<Response> {
+        let response: Response;
 
         response = await fetch(`${process.env.API_BASE_PATH}${this.apiPath}`, {
             // TODO: Abstract out into base reqest object with a request builder
             method: 'get',
-        });
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestObject),
+        })
+            .then((res) => {
+                if (res.ok) {
+                    return res;
+                }
+                throw new Error('Something went wrong');
+            })
+            .catch((error) => {
+                console.log(error);
+                return Promise.reject(JSON.stringify(error));
+            });
 
-        return response
+        return response;
     }
 
     // Functions that pages will directly call.

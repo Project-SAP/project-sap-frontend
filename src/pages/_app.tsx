@@ -10,7 +10,7 @@ class SapApp extends App {
             pageProps: {
                 ...(Component.getInitialProps ? await Component.getInitialProps(ctx) : {})
             }
-        }
+        };
     }
 
     render(): JSX.Element {
