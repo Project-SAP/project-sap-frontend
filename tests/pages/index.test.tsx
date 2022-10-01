@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, RenderResult, screen } from "@testing-library/react";
 import IndexPage from '../../src/pages/index';
-import TestApiHandler from '../../src/api/testApiHandler';
+import TestApiHandler from '../../src/api/TestApiHandler';
 
 /**
  * Example of testing for a page.
