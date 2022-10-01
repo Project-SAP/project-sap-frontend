@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import { useState } from 'react';
 import styles from '../styles/Home.module.css'
 import MainLayout from '../components/mainLayout';
-import TestApiHandler from '../api/TestApiHandler';
+import TestApiHandler from './../api/testApiHandler';
 
 const IndexPage: NextPage = () => {
 
@@ -22,12 +22,12 @@ const IndexPage: NextPage = () => {
             <MainLayout>
                 <div className={styles.container}>
                     <p>Simple testing test</p>
-                    <button onClick={callTestAPI}>Make API call</button>
+                    <button data-testid='api-button' onClick={callTestAPI}>Make API call</button>
                     {renderedText != "" ?
-                        <p className='api-output'>
+                        <p data-testid='api-output'>
                             {renderedText}
                         </p> :
-                        <p></p>
+                        <p/>
                     }
                 </div>
             </MainLayout>

@@ -1,9 +1,11 @@
-import { render, RenderResult, screen } from "@testing-library/react";
-import IndexPage from './../../pages/index';
+import { cleanup, fireEvent, render, RenderResult, screen } from "@testing-library/react";
+import IndexPage from '../../src/pages/index';
+import TestApiHandler from '../../src/api/testApiHandler';
 
 /**
  * Example of testing for a page.
  * Normally won't require so many comments as `describe` and `it` blocks should be self explanatory. 
+ * TODO: can be removed once tests for actual pages are created
  */
 describe('index page', () => {
     // Contains a container of rendered of page
@@ -36,8 +38,26 @@ describe('index page', () => {
 
     // Example of page specific functionality.
     describe('when clicking on button', () => {
-        it('should call api', () => {
-            
+        it('should call api', async () => {
+            // Mock API call
+            const mockResponseMessage = 'test message';
+            jest.spyOn(TestApiHandler.prototype, 'getDataMessage')
+                .mockImplementation(() => Promise.resolve(mockResponseMessage));
+
+            const buttonElement = await screen.findByTestId('api-button');
+
+            // Button should be rendered on page
+            expect(buttonElement).toBeTruthy();
+
+            // Click button, triggering API call
+            fireEvent.click(buttonElement);
+
+            // Validate that message appeared
+            const responseMessageElement = await screen.findByText(mockResponseMessage);
+            expect(responseMessageElement).toBeInTheDocument();
+            expect(responseMessageElement.textContent).toEqual(mockResponseMessage);
         });
     });
+
+    afterEach(cleanup);
 });
