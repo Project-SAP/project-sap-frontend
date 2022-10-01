@@ -7,7 +7,7 @@ class BaseApiHandler {
     }
 
     /**
-     * Generalized api call using `axios` library.
+     * Generalized api call using library.
      * @param url sub path and or parameters for endpoint
      * @returns Promise of generic JSON object.
      */

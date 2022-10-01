@@ -1,6 +1,5 @@
 import BaseApiHandler from './BaseApiHandler';
 import { DataModel } from './models/dataModel';
-import { AxiosResponse } from 'axios';
 
 class TestApiHandler extends BaseApiHandler {
     constructor() {
