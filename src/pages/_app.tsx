@@ -1,4 +1,4 @@
-import App, { AppContext, AppInitialProps } from 'next/app'
+import App, { AppContext } from 'next/app'
 
 /**
  * Custom app class to override default styling and configuration.

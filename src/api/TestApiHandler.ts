@@ -1,6 +1,6 @@
 class TestApiHandler {
     // Only accessible to API. Pages should never need to access these paths directly.
-    private readonly apiPath = '/test'
+    private readonly apiPath = '/test';
 
     /**
      * Generalized api call using `fetch`
@@ -25,7 +25,7 @@ class TestApiHandler {
             })
             .catch((error) => {
                 console.log(error);
-                return Promise.reject(JSON.stringify(error));
+                return Promise.reject('API error');
             });
 
         return response;
@@ -43,4 +43,4 @@ class TestApiHandler {
     }
 }
 
-export default TestApiHandler
+export default TestApiHandler;

@@ -1,6 +1,6 @@
-import type { NextPage } from 'next'
+import type { NextPage } from 'next';
 import { useState } from 'react';
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Home.module.css';
 import MainLayout from '../components/mainLayout';
 import TestApiHandler from './../api/testApiHandler';
 
@@ -27,7 +27,7 @@ const IndexPage: NextPage = () => {
                         <p data-testid='api-output'>
                             {renderedText}
                         </p> :
-                        <p/>
+                        <p />
                     }
                 </div>
             </MainLayout>

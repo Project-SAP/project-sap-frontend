@@ -9,7 +9,7 @@ const Header: NextPage = () => {
     }
     return (
         <div className='header' style={style}>
-            <div style={{margin: '10px'}}>
+            <div style={{ margin: '10px' }}>
                 CS: 498 - SAP
             </div>
         </div>
