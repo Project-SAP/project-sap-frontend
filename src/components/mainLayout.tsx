@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { PropsWithChildren } from 'react';
+import { CSSProperties, PropsWithChildren } from 'react';
 import Footer from './footer';
 import Header from './header';
 
@@ -10,7 +10,7 @@ const MainLayout: NextPage = (props: PropsWithChildren) => {
         flexDirection: 'column',
         minHeight: '100vh',
         overflow: 'auto'
-    };
+    } as CSSProperties;
 
     return (
         <>

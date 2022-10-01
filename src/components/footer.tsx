@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import { CSSProperties } from 'react';
 
 const Footer: NextPage = () => {
     const style = {
@@ -8,7 +9,8 @@ const Footer: NextPage = () => {
         width: '100%',
         height: '30px',
         bottom: 0,
-    }
+    } as CSSProperties;
+
     return (
         <div className='footer' style={style}>
             <div style={{ margin: '5px' }}>
