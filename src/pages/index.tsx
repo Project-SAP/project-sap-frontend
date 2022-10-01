@@ -13,8 +13,8 @@ const IndexPage: NextPage = () => {
 
     // TODO: Pull out to separate API class
     const callTestAPI = async () => {
-        const newText = await apiHandler.getDataMessage();
-        setRenderedText(newText);
+        const data = await apiHandler.getDataMessage();
+        setRenderedText(data.message);
     };
 
     return (

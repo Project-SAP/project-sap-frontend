@@ -1,12 +1,11 @@
 import { cleanup, fireEvent, render, RenderResult, screen } from "@testing-library/react";
 import IndexPage from '../../src/pages/index';
 import TestApiHandler from '../../src/api/TestApiHandler';
+import { DataModel } from "../../src/api/models/dataModel";
 
-/**
- * Example of testing for a page.
- * Normally won't require so many comments as `describe` and `it` blocks should be self explanatory. 
- * TODO: can be removed once tests for actual pages are created
- */
+// Example of testing for a page.
+// Normally won't require so many comments as `describe` and `it` blocks should be self explanatory. 
+// TODO: can be removed once tests for actual pages are created
 describe('index page', () => {
     // Contains a container of rendered of page
     let renderedPage: RenderResult;
@@ -39,10 +38,10 @@ describe('index page', () => {
     // Example of page specific functionality.
     describe('when clicking on button', () => {
         it('should call api', async () => {
-            // Mock API call
-            const mockResponseMessage = 'test message';
-            jest.spyOn(TestApiHandler.prototype, 'getDataMessage')
-                .mockImplementation(() => Promise.resolve(mockResponseMessage));
+            // Mock `getDataMessage` API call. Functionality is tested in handler tests.
+            const mockResponse = { message: 'test message' } as DataModel;
+            const apiCallSpy = jest.spyOn(TestApiHandler.prototype, 'getDataMessage');
+            apiCallSpy.mockResolvedValue(mockResponse);
 
             const buttonElement = await screen.findByTestId('api-button');
 
@@ -53,9 +52,9 @@ describe('index page', () => {
             fireEvent.click(buttonElement);
 
             // Validate that message appeared
-            const responseMessageElement = await screen.findByText(mockResponseMessage);
+            const responseMessageElement = await screen.findByText(mockResponse.message);
             expect(responseMessageElement).toBeInTheDocument();
-            expect(responseMessageElement.textContent).toEqual(mockResponseMessage);
+            expect(responseMessageElement.textContent).toEqual(mockResponse.message);
         });
     });
 

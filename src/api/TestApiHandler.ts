@@ -1,45 +1,19 @@
-class TestApiHandler {
-    // Only accessible to API. Pages should never need to access these paths directly.
-    private readonly apiPath = '/test';
+import BaseApiHandler from './BaseApiHandler';
+import { DataModel } from './models/dataModel';
+import { AxiosResponse } from 'axios';
 
-    /**
-     * Generalized api call using `fetch`
-     * @param requestObject Optional request body
-     * @returns Response object
-     * TODO: Probably move to generalized ApiHandler class
-     */
-    async call(requestObject?: any): Promise<Response> {
-        let response: Response;
-
-        response = await fetch(`${process.env.API_BASE_PATH}${this.apiPath}`, {
-            // TODO: Abstract out into base reqest object with a request builder
-            method: 'get',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestObject),
-        })
-            .then((res) => {
-                if (res.ok) {
-                    return res;
-                }
-                throw new Error('Something went wrong');
-            })
-            .catch((error) => {
-                console.log(error);
-                return Promise.reject('API error');
-            });
-
-        return response;
+class TestApiHandler extends BaseApiHandler {
+    constructor() {
+        super('/test');
     }
 
-    // Functions that pages will directly call.
-    // Note that return type is a promise. This means the call needs to be prefaced with "await".
-    public async getDataMessage(): Promise<string> {
-        const res = await this.call();
+    public getDataMessage(): Promise<DataModel> {
+        // In a more realistic scenario, a request object will be passed in with additional parameters.
+        const response = this.callGet().then((res) => {
+            return res as DataModel;
+        });
 
-        // Get Json from response
-        let message = res.json();
-
-        return message;
+        return response;
     }
 }
 

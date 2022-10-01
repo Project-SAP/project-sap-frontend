@@ -1,3 +1,3 @@
-export type DataModel = {
+export interface DataModel {
     message: string;
 };
