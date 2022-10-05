@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "nucllear.vscode-extension-auto-import",
+        "firsttris.vscode-jest-runner",
+        "andys8.jest-snippets",
+        "yzhang.markdown-all-in-one",
+        "christian-kohler.path-intellisense",
+        "esbenp.prettier-vscode",
+        "msjsdiag.vscode-react-native",
+        "gruntfuggly.todo-tree",
+        "ms-vscode.vscode-typescript-next",
+        "AvneeshAgarwal.react-nextjs-snippets"
+    ]
+}
