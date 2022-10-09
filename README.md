@@ -28,6 +28,7 @@ There are a few plugins to make development easier for nodeJS projects. The plug
 -   Jest Runner: https://marketplace.visualstudio.com/items?itemName=firsttris.vscode-jest-runner
 -   Jest Snippets: https://marketplace.visualstudio.com/items?itemName=andys8.jest-snippets
 -   React Native Tools: https://marketplace.visualstudio.com/items?itemName=msjsdiag.vscode-react-native
+-   Tailwind Intellisense: https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss
 
 Optional, but still recommended
 

@@ -21,8 +21,12 @@ const IndexPage: NextPage = () => {
         <>
             <MainLayout>
                 <div className={styles.container}>
-                    <p>Simple testing test</p>
-                    <button data-testid='api-button' onClick={callTestAPI}>Make API call</button>
+                    <h1 className="text-3xl font-bold underline">
+                        Simple testing test
+                    </h1>
+                    <button data-testid='api-button' onClick={callTestAPI}>
+                        Make API call
+                    </button>
                     {renderedText != "" ?
                         <p data-testid='api-output'>
                             {renderedText}
