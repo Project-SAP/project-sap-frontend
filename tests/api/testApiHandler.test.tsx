@@ -1,5 +1,5 @@
 import { cleanup } from "@testing-library/react";
-import TestApiHandler from "../../src/api/TestApiHandler";
+import { TestApiHandler } from "../../src/api/TestApiHandler";
 
 // Example of testing an api handler
 describe('test api handler', () => {

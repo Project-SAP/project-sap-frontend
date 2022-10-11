@@ -1,8 +1,8 @@
 import type { NextPage } from 'next';
 import { useState } from 'react';
+import { TestApiHandler } from '../api/TestApiHandler';
 import styles from '../styles/Home.module.css';
 import MainLayout from '../components/mainLayout';
-import TestApiHandler from '../api/TestApiHandler';
 
 const IndexPage: NextPage = () => {
 

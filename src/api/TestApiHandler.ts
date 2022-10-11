@@ -1,7 +1,7 @@
-import BaseApiHandler from './BaseApiHandler';
-import { DataModel } from './models/dataModel';
+import { BaseApiHandler } from './BaseApiHandler';
+import { DataModel } from './models/data.model';
 
-class TestApiHandler extends BaseApiHandler {
+export class TestApiHandler extends BaseApiHandler {
     constructor() {
         super('/test');
     }
@@ -15,5 +15,3 @@ class TestApiHandler extends BaseApiHandler {
         return response;
     }
 }
-
-export default TestApiHandler;

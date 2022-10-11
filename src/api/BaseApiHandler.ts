@@ -1,4 +1,4 @@
-class BaseApiHandler {
+export class BaseApiHandler {
     // Only accessible to API. Pages should never need to access these paths directly.
     protected readonly apiPath: string;
 
@@ -36,5 +36,3 @@ class BaseApiHandler {
         return response;
     }
 }
-
-export default BaseApiHandler;
