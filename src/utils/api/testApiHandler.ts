@@ -12,6 +12,8 @@ export class TestApiHandler extends BaseApiHandler {
             return res as DataModel;
         });
 
+        console.log('calling to backend');
+
         return response;
     }
 }

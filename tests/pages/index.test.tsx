@@ -1,7 +1,7 @@
 import IndexPage from '../../src/pages/index';
 import { cleanup, fireEvent, render, RenderResult, screen } from "@testing-library/react";
-import { TestApiHandler } from '../../src/api/TestApiHandler';
-import { DataModel } from "../../src/api/models/data.model";
+import { TestApiHandler } from '../../src/utils/api/testApiHandler';
+import { DataModel } from "../../src/utils/api/models/data.model";
 
 // Example of testing for a page.
 // Normally won't require so many comments as `describe` and `it` blocks should be self explanatory. 
