@@ -7,7 +7,5 @@ export default async function handler(
     res: NextApiResponse<DataModel>
 ) {
     const api = new TestApiHandler();
-
-    console.log('external call to api handler');
     res.status(200).json(await api.getDataMessage());
 }

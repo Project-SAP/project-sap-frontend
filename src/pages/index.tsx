@@ -10,8 +10,9 @@ const IndexPage: NextPage = () => {
 
     // TODO: Pull out to separate API class
     const callTestAPI = async () => {
-        const data: DataModel = await (await fetch('/api/test')).json();
-        setRenderedText(data.message);
+        await fetch('/api/test')
+            .then((res: Response) => res.json())
+            .then((data: DataModel) => setRenderedText(data.message));
     };
 
     return (

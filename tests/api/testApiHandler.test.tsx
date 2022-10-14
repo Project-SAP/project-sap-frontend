@@ -1,12 +1,11 @@
 import { cleanup } from "@testing-library/react";
 import { TestApiHandler } from "../../src/utils/api/testApiHandler";
+import { mockFetch } from "../../src/utils/testing/mockFetch";
 
 // Example of testing an api handler
 describe('test api handler', () => {
 
     const api = new TestApiHandler();
-
-    const mockFetch = (body: any) => global.fetch = jest.fn().mockResolvedValue(new Response(JSON.stringify(body)));
 
     it('should call out to backend using fetch', async () => {
 

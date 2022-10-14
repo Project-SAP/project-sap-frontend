@@ -1,3 +1,6 @@
+/**
+ * Base API handler to call out to express backend.
+ */
 export class BaseApiHandler {
     // Only accessible to API. Pages should never need to access these paths directly.
     protected readonly apiPath: string;
@@ -10,8 +13,9 @@ export class BaseApiHandler {
      * Generalized api call using library.
      * @param url sub path and or parameters for endpoint
      * @returns Promise of generic JSON object.
+     * @type T data model expected to be returned.
      */
-    callGet(url?: string): Promise<any> {
+    callGet<T>(url?: string): Promise<T> {
         let response: any;
 
         const completePath = `${this.apiPath}${url ? url : ''}`;

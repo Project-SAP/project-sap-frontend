@@ -1,4 +1,4 @@
-import { BaseApiHandler } from './BaseApiHandler';
+import { BaseApiHandler } from './baseApiHandler';
 import { DataModel } from './models/data.model';
 
 export class TestApiHandler extends BaseApiHandler {
@@ -8,9 +8,7 @@ export class TestApiHandler extends BaseApiHandler {
 
     public getDataMessage(): Promise<DataModel> {
         // In a more realistic scenario, a request object will be passed in with additional parameters.
-        const response = this.callGet().then((res) => {
-            return res as DataModel;
-        });
+        const response = this.callGet<DataModel>();
 
         console.log('calling to backend');
 
