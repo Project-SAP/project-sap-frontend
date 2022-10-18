@@ -9,6 +9,7 @@
         "msjsdiag.vscode-react-native",
         "gruntfuggly.todo-tree",
         "ms-vscode.vscode-typescript-next",
-        "AvneeshAgarwal.react-nextjs-snippets"
+        "avneeshagarwal.react-nextjs-snippets",
+        "bradlc.vscode-tailwindcss"
     ]
 }
