@@ -1,11 +1,11 @@
 import type { NextPage } from 'next';
 import { useState } from 'react';
-import styles from '../styles/Home.module.css';
 import MainLayout from '../components/mainLayout';
 import { DataModel } from '../utils/api/models/data.model';
+import Head from 'next/head'
 
 const IndexPage: NextPage = () => {
-    // Using states to allow relading data in the DOM
+    // Using states to allow reloading data in the DOM
     let [renderedText, setRenderedText] = useState('');
 
     // TODO: Pull out to separate API class
@@ -17,22 +17,20 @@ const IndexPage: NextPage = () => {
 
     return (
         <>
-            <MainLayout>
-                <div className={styles.container}>
-                    <h1 className="text-3xl font-bold underline">
-                        Simple testing test
-                    </h1>
-                    <button data-testid="api-button" onClick={callTestAPI}>
-                        Make API call
-                    </button>
-                    {renderedText != '' ? (
-                        <p data-testid="api-output">{renderedText}</p>
-                    ) : (
-                        <p />
-                    )}
-                </div>
-            </MainLayout>
-        </>
+            <Head>
+                <title>CatSafe - Of the Wildcats, by the Wildcats, for the Wildcats!</title>
+                <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+            </Head>
+            <body>
+                <MainLayout>
+                    <section className="flex items-center justify-center h-screen bg-gradient-to-br from-complementary to-dominant">
+                        <div>
+                            <h1 className="text-white text-9xl text-serif">CatSafe</h1>
+                        </div>
+                    </section>
+                </MainLayout>
+            </body>
+            </>
     );
 };
 
