@@ -1,3 +1,4 @@
+import '../styles/globals.css';
 import App, { AppContext } from 'next/app'
 
 /**
