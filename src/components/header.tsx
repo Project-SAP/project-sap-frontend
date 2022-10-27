@@ -3,19 +3,13 @@ import Link from 'next/link'
 
 
 const Header: NextPage = () => {
-    const style = {
-        backgroundColor: 'blue',
-        color: 'white',
-        width: '100%',
-        height: '50px'
-    }
     return (
-        <nav className="container relative p-6 mx-auto">
+        <nav className="sticky p-6 mx-auto bg-white w-full">
             {/* <!-- Flex Container --> */}
             <div className="flex items-center justify-between">
               {/* <!-- Logo --> */}
               <div className="space-x-6">
-                <Link href="#">
+                <Link href="/">
                   <a className="text-2xl hover:text-dominant">CatSafe</a>
                 </Link>
               </div>
@@ -44,7 +38,7 @@ const Header: NextPage = () => {
 
             {/* <!-- Mobile Menu --> */}
             <div className="md:hidden">
-              <div id="menu" className="absolute flex flex-col items-center self-end py-8 mt-10 space-y-6 font-bold bg-white left-6 right-6 drop-shadow-md sm:w-auto sm:self-center">
+              <div id="menu" className="absolute flex hidden flex-col items-center self-end py-8 mt-10 space-y-6 font-bold bg-white left-6 right-6 drop-shadow-md sm:w-auto sm:self-center">
                 <Link href="#"><a className="hover:text-dominant">How It Works</a></Link>
                 <Link href="#"><a className="hover:text-dominant">Resources</a></Link>
                 <Link href="#"><a className="hover:text-dominant">About Us</a></Link>
