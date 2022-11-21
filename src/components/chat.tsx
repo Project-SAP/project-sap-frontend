@@ -16,7 +16,7 @@ const Chat = (props) => {
                     }`}
                 >
                     <div
-                        className={`flex flex-col space-y-2 text-xs max-w-xs mx-2 ${
+                        className={`flex flex-col space-y-2 text-sm md:text-sm lg:text-base 2xl:text-xl max-w-xs mx-2 ${
                             props.user === 'sender'
                                 ? 'order-2 items-start'
                                 : 'order-1 items-end'
