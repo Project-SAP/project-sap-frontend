@@ -11,28 +11,24 @@ const messages = [];
 
 const ChatPage: NextPage = (props): JSX.Element => {
     const { data: session } = useSession();
-    const dummy = useRef();
+
+    // Used later to scroll to the bottom of the chat window every time a user sends a message
+    const chatEnd = useRef();
     const [chatText, setChatText] = useState('');
 
+    // If user is not authenticated
     if (!session) return <p>Access Denied.</p>;
-
-    const userTyping = (event: any) => {
-        // keycode for when the user presses the Enter button
-        event.keyCode === 13
-            ? submitMessage()
-            : setChatText(event.target.value);
-    };
 
     // Check if message is empty or just blank spaces
     const messageValid = (txt: any) => txt && txt.replace(/\s/g, '').length;
 
     // Submit the message if it is valid
-    const submitMessage = () => {
+    const submitMessage = (e) => {
+        e.preventDefault();
         if (messageValid(chatText)) {
-            document.getElementById('chatInput').value = '';
             messages.push(chatText);
             setChatText('');
-            dummy.current.scrollIntoView({ behavior: 'smooth' });
+            chatEnd.current.scrollIntoView({ behavior: 'smooth' });
         }
     };
 
@@ -71,27 +67,6 @@ const ChatPage: NextPage = (props): JSX.Element => {
                             >
                                 Sign Out
                             </button>
-
-                            {/* Menu Button */}
-                            {/* <button
-                                type="button"
-                                className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="currentColor"
-                                    className="w-6 h-6"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                                    />
-                                </svg>
-                            </button> */}
                         </div>
                     </div>
 
@@ -113,23 +88,23 @@ const ChatPage: NextPage = (props): JSX.Element => {
                             ))}
 
                         {/* Scroll the chat to the bottom of the chat window when a new message is sent */}
-                        <span ref={dummy}>&nbsp;</span>
+                        <span ref={chatEnd}>&nbsp;</span>
                     </div>
                     {/* Messages Window End */}
 
                     <div className="border-t-2 border-gray-200 px-4 pt-3 mb-2 sm:mb-0 pb-3">
-                        <div className="relative flex">
+                        <form className="relative flex">
                             <input
                                 id="chatInput"
                                 type="text"
                                 placeholder="Write your message!"
                                 className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-6 bg-gray-200 rounded-md py-2"
-                                onKeyUp={(e) => userTyping(e)}
-                                onChange={userTyping}
+                                onChange={(e) => setChatText(e.target.value)}
+                                value={chatText}
                             />
                             <div className="absolute right-0 items-center inset-y-0 flex bg-dominant hover:bg-black rounded-r-md">
                                 <button
-                                    type="button"
+                                    type="submit"
                                     className="inline-flex items-center justify-center px-4 py-2 text-white bg-dominant hover:bg-black focus:outline-none rounded-r-md"
                                     onClick={submitMessage}
                                     disabled={!chatText}
@@ -145,7 +120,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
                                     </svg>
                                 </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
