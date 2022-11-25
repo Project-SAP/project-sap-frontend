@@ -1,35 +1,94 @@
-//@ts-nocheck
 import type { NextPage } from 'next';
+import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
-import avatarMale from '../images/avatar/male.png';
+import { useEffect, useRef, useState } from 'react';
+import { io } from 'socket.io-client';
 import Chat from '../components/chat';
-import { useState, useRef } from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import avatarMale from '../images/avatar/male.png';
+import { ChatMessage } from './../models/chatMessage';
+import { ChatRoom } from './../models/chatRoom';
 
-// Temporarily store messages of a user
-const messages = [];
+const messages: ChatMessage[] = [];
+let chatRoom: ChatRoom;
 
 const ChatPage: NextPage = (props): JSX.Element => {
+    // TODO: Once username is properly implemented, remove use of email. It's only being used for debugging purposes
+    const userName: string = useSession().data?.user?.name || useSession().data?.user?.email?.split('@')[0] || 'current user';
+
+
+    const socket = io(`http://localhost:8080`);
+    const [isConnected, setIsConnected] = useState(socket.connected);
+
+    useEffect(() => {
+        socket.on('connect', () => {
+            setIsConnected(true);
+            // tslint:disable-next-line:no-console
+            console.log(`Socket connected`);
+            // TODO: Get basic socket information. Store into session storage.
+            sessionStorage.setItem('currentChatSession', JSON.stringify(chatRoom));
+            // TODO: Determine if connection is a reconnect, if so, load room from session
+        });
+
+        socket.on('disconnect', () => {
+            setIsConnected(false);
+            // tslint:disable-next-line:no-console
+            console.log(`Socket disconnected`);
+            sessionStorage.removeItem('currentChatSession');
+        })
+
+        // Expecting to receive a `ChatMessage`
+        socket.on("message", (message: ChatMessage) => {
+            messages.push(message);
+            // tslint:disable-next-line:no-console
+            console.log(`Socket ${message.source} said ${message.content}`);
+        });
+
+        return () => {
+            socket.off('connect');
+            socket.off('disconnect');
+            socket.off('message');
+        }
+        // Passing in an empty array here only runs this once and not every page reload... For some reason.
+    }, []);
+
     const { data: session } = useSession();
 
+
     // Used later to scroll to the bottom of the chat window every time a user sends a message
-    const chatEnd = useRef();
+    const chatEnd: any = useRef();
     const [chatText, setChatText] = useState('');
 
     // If user is not authenticated
     if (!session) return <p>Access Denied.</p>;
 
+    // Configure
+    const onConnect = () => {
+        sessionStorage.setItem('room', socket.id);
+    }
+
     // Check if message is empty or just blank spaces
     const messageValid = (txt: any) => txt && txt.replace(/\s/g, '').length;
 
     // Submit the message if it is valid
-    const submitMessage = (e) => {
+    const submitMessage = (e: any) => {
         e.preventDefault();
         if (messageValid(chatText)) {
-            messages.push(chatText);
+            // Message is valid, build chat message to send
+            const chatMessage: ChatMessage = {
+                source: userName,
+                content: chatText,
+                timestamp: new Date()
+            }
+
+            messages.push(chatMessage);
+            socket.emit('message', chatText);
             setChatText('');
             chatEnd.current.scrollIntoView({ behavior: 'smooth' });
+            // TODO: Once message is added, update session storage
+            sessionStorage.setItem('currentChatSession', JSON.stringify(chatRoom));
         }
+        // tslint:disable-next-line:no-console
+        console.log(messages);
     };
 
     return (
@@ -50,7 +109,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
                             <div className="flex flex-col leading-tight">
                                 <div className="text-2xl mt-1 flex items-center">
                                     <span className="text-gray-700 mr-3">
-                                        {session.user?.email?.split('@')[0]}
+                                        {userName}
                                     </span>
                                 </div>
                             </div>
@@ -77,13 +136,13 @@ const ChatPage: NextPage = (props): JSX.Element => {
                     >
                         {/* If a message exists, add the latest message to the chat window */}
                         {messages &&
-                            messages.map((msg, index) => (
+                            messages.map((chatMsg: ChatMessage, index: number) => (
                                 <Chat
                                     user={
-                                        index % 2 == 0 ? 'sender' : 'receiver'
+                                        chatMsg.source == userName ? 'sender' : 'receiver'
                                     }
                                     key={index}
-                                    message={msg}
+                                    message={chatMsg.content}
                                 />
                             ))}
 
