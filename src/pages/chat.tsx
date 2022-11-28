@@ -2,54 +2,82 @@ import type { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import Chat from '../components/chat';
 import avatarMale from '../images/avatar/male.png';
 import { ChatMessage } from './../models/chatMessage';
-import { ChatRoom } from './../models/chatRoom';
 import SocketClientFactory from './../utils/socketClientFactory';
 
-const messages: ChatMessage[] = [];
-let chatRoom: ChatRoom;
+let socket: Socket;
 
 const ChatPage: NextPage = (props): JSX.Element => {
     // TODO: Once username is properly implemented, remove use of email. It's only being used for debugging purposes
     const userName: string = useSession().data?.user?.name || useSession().data?.user?.email?.split('@')[0] || 'current user';
 
-    const socket = SocketClientFactory.getInstance();
-    const [isConnected, setIsConnected] = useState(socket.connected);
+    const [getReceivedMessage, setReceivedMessage] = useState();
+    const [getMessages, setMessages] = useState([] as ChatMessage[]);
 
     useEffect(() => {
+        socket = SocketClientFactory.getNewInstance();
+
         socket.on('connect', () => {
-            setIsConnected(true);
             // tslint:disable-next-line:no-console
             console.log(`Socket connected`);
-            // TODO: Get basic socket information. Store into session storage.
-            sessionStorage.setItem('currentChatSession', JSON.stringify(chatRoom));
-            // TODO: Determine if connection is a reconnect, if so, load room from session
         });
 
         socket.on('disconnect', () => {
-            setIsConnected(false);
             // tslint:disable-next-line:no-console
             console.log(`Socket disconnected`);
-            sessionStorage.removeItem('currentChatSession');
         })
 
         // Expecting to receive a `ChatMessage`
-        socket.on("message", (message: ChatMessage) => {
-            messages.push(message);
-            // tslint:disable-next-line:no-console
-            console.log(`Socket ${message.source} said ${message.content}`);
+        socket.on("message", (message: any) => {
+            const chatMessage: ChatMessage = {
+                source: message.sender,
+                content: message.message,
+                timestamp: new Date()
+            }
+            setReceivedMessage(chatMessage);
+        });
+
+        socket.on('match', (matchMessage: any) => {
+            setReceivedMessage({
+                content: matchMessage.message,
+                source: 'info',
+                timestamp: new Date()
+            });
+        });
+
+        socket.on('join', (joinMessage: any) => {
+            setReceivedMessage({
+                content: joinMessage.message,
+                source: 'info',
+                timestamp: new Date()
+            });
+        });
+
+        socket.on('error', (errorMessage: any) => {
+            setReceivedMessage({
+                content: errorMessage.message,
+                source: 'info',
+                timestamp: new Date()
+            });
         });
 
         return () => {
             socket.off('connect');
             socket.off('disconnect');
             socket.off('message');
+            socket.off('match');
+            socket.off('join');
+            socket.off('error');
         }
-        // Passing in an empty array here only runs this once and not every page reload... For some reason.
     }, []);
+
+    useEffect(() => {
+        getReceivedMessage &&
+            setMessages((prevMessages) => [...prevMessages, getReceivedMessage]);
+    }, [getReceivedMessage]);
 
     const { data: session } = useSession();
 
@@ -60,11 +88,6 @@ const ChatPage: NextPage = (props): JSX.Element => {
 
     // If user is not authenticated
     if (!session) return <p>Access Denied.</p>;
-
-    // Configure
-    const onConnect = () => {
-        sessionStorage.setItem('room', socket.id);
-    }
 
     // Check if message is empty or just blank spaces
     const messageValid = (txt: any) => txt && txt.replace(/\s/g, '').length;
@@ -80,16 +103,19 @@ const ChatPage: NextPage = (props): JSX.Element => {
                 timestamp: new Date()
             }
 
-            messages.push(chatMessage);
-            socket.emit('message', chatText);
+            socket.emit('message', { sender: chatMessage.source, message: chatMessage.content });
             setChatText('');
             chatEnd.current.scrollIntoView({ behavior: 'smooth' });
-            // TODO: Once message is added, update session storage
-            sessionStorage.setItem('currentChatSession', JSON.stringify(chatRoom));
         }
         // tslint:disable-next-line:no-console
-        console.log(messages);
+        console.log(getMessages);
     };
+
+    const joinQueue = (profile: string) => {
+        // tslint:disable-next-line:no-console
+        console.log({ name: userName, profile });
+        socket.emit('joinQueue', { name: userName, profile });
+    }
 
     return (
         <div>
@@ -115,6 +141,24 @@ const ChatPage: NextPage = (props): JSX.Element => {
                             </div>
                         </div>
                         <div className="flex items-center space-x-2">
+                            {/* TODO: Remove this button */}
+                            <button
+                                onClick={() => {
+                                    joinQueue('venter');
+                                }}
+                                className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"
+                            >
+                                Enter queue (venter)
+                            </button>
+                            {/* TODO: Remove this button */}
+                            <button
+                                onClick={() => {
+                                    joinQueue('listener');
+                                }}
+                                className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"
+                            >
+                                Enter queue (listener)
+                            </button>
                             {/* Sign Out Button */}
                             <button
                                 onClick={() => {
@@ -135,11 +179,11 @@ const ChatPage: NextPage = (props): JSX.Element => {
                         className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
                     >
                         {/* If a message exists, add the latest message to the chat window */}
-                        {messages &&
-                            messages.map((chatMsg: ChatMessage, index: number) => (
+                        {getMessages &&
+                            getMessages.map((chatMsg: ChatMessage, index: number) => (
                                 <Chat
                                     user={
-                                        chatMsg.source == userName ? 'sender' : 'receiver'
+                                        chatMsg.source == 'info' ? 'info' : chatMsg.source == userName ? 'sender' : 'receiver'
                                     }
                                     key={index}
                                     message={chatMsg.content}

@@ -11,16 +11,14 @@ const Chat = (props) => {
         <div>
             <div className="chat-message">
                 <div
-                    className={`flex items-end ${
-                        props.user === 'sender' ? '' : 'justify-end'
-                    }`}
+                    className={`flex items-end ${props.user === 'info' ? 'justify-center' : props.user === 'sender' ? '' : 'justify-end'
+                        }`}
                 >
                     <div
-                        className={`flex flex-col space-y-2 text-sm md:text-sm lg:text-base 2xl:text-xl max-w-xs mx-2 ${
-                            props.user === 'sender'
+                        className={`flex flex-col space-y-2 text-sm md:text-sm lg:text-base 2xl:text-xl max-w-xs mx-2 ${props.user === 'sender'
                                 ? 'order-2 items-start'
                                 : 'order-1 items-end'
-                        }`}
+                            }`}
                     >
                         <span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
                             {props.message}
@@ -28,7 +26,7 @@ const Chat = (props) => {
                     </div>
 
                     <div className="w-6 h-6 rounded-full order-1 flex items-center">
-                        {props.user === 'sender' ? (
+                        {props.user === 'info' ? (<></>) : props.user === 'sender' ? (
                             <Image
                                 src={avatarSender}
                                 alt="Female Avatar"

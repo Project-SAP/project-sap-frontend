@@ -16,6 +16,8 @@ export default class SocketClientFactory {
 
     private constructor() {}
 
+    // Get singleton instance
+    // TODO: Determine if this is even required
     public static getInstance(): Socket {
         if (!SocketClientFactory.socketClient) {
             SocketClientFactory.socketClient = io(
@@ -24,5 +26,10 @@ export default class SocketClientFactory {
         }
 
         return SocketClientFactory.socketClient;
+    }
+
+    // Get a new non-singleton instance. Keeps initialization configuration abstracted away from business logic.
+    public static getNewInstance(): Socket {
+        return io(SocketClientFactory.socketPath);
     }
 }
