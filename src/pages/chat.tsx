@@ -14,7 +14,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
     // TODO: Once username is properly implemented, remove use of email. It's only being used for debugging purposes
     const userName: string = useSession().data?.user?.name || useSession().data?.user?.email?.split('@')[0] || 'current user';
 
-    const [getReceivedMessage, setReceivedMessage] = useState();
+    const [getReceivedMessage, setReceivedMessage]: [ChatMessage | undefined, React.Dispatch<React.SetStateAction<ChatMessage | undefined>>] = useState();
     const [getMessages, setMessages] = useState([] as ChatMessage[]);
 
     useEffect(() => {
@@ -148,7 +148,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
                                 }}
                                 className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"
                             >
-                                Enter queue (venter)
+                                Enter queue as venter
                             </button>
                             {/* TODO: Remove this button */}
                             <button
@@ -157,7 +157,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
                                 }}
                                 className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"
                             >
-                                Enter queue (listener)
+                                Enter queue as listener
                             </button>
                             {/* Sign Out Button */}
                             <button
