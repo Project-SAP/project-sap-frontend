@@ -7,6 +7,7 @@ import Chat from '../components/chat';
 import avatarMale from '../images/avatar/male.png';
 import { ChatMessage } from './../models/chatMessage';
 import { ChatRoom } from './../models/chatRoom';
+import SocketClientFactory from './../utils/socketClientFactory';
 
 const messages: ChatMessage[] = [];
 let chatRoom: ChatRoom;
@@ -15,8 +16,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
     // TODO: Once username is properly implemented, remove use of email. It's only being used for debugging purposes
     const userName: string = useSession().data?.user?.name || useSession().data?.user?.email?.split('@')[0] || 'current user';
 
-
-    const socket = io(`http://localhost:8080`);
+    const socket = SocketClientFactory.getInstance();
     const [isConnected, setIsConnected] = useState(socket.connected);
 
     useEffect(() => {
