@@ -107,13 +107,9 @@ const ChatPage: NextPage = (props): JSX.Element => {
             setChatText('');
             chatEnd.current.scrollIntoView({ behavior: 'smooth' });
         }
-        // tslint:disable-next-line:no-console
-        console.log(getMessages);
     };
 
     const joinQueue = (profile: string) => {
-        // tslint:disable-next-line:no-console
-        console.log({ name: userName, profile });
         socket.emit('joinQueue', { name: userName, profile });
     }
 
