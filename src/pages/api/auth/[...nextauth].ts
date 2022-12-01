@@ -21,6 +21,8 @@ const authOptions: NextAuthOptions = {
                         ? 'http://localhost:8080'
                         : process.env.NEXT_PUBLIC_API_BASE_PATH;
 
+                console.log(backendURL);
+
                 const res = await fetch(`${backendURL}/auth/login`, {
                     method: 'POST',
                     body: JSON.stringify({
@@ -32,8 +34,10 @@ const authOptions: NextAuthOptions = {
                     },
                 });
 
+
                 // if authentication fails, an error is returned, else a token
                 const user = await res.json();
+                console.log(user);
 
                 if (user.error) {
                     throw new Error('Email or password incorrect.');
@@ -44,7 +48,6 @@ const authOptions: NextAuthOptions = {
                 }
 
                 // if everything is fine
-                console.log(user);
                 return user;
             },
         }),
