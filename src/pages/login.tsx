@@ -18,7 +18,7 @@ const Login: NextPage = (props): JSX.Element => {
         const payload = { email, password };
         const result = await signIn('credentials', {
             ...payload,
-            callbackUrl: `${window.location.origin}/chat`,
+            callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL == undefined ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL}/chat`,
         });
 
         // Credentials were valid

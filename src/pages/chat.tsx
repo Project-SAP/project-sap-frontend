@@ -159,7 +159,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
                             <button
                                 onClick={() => {
                                     signOut({
-                                        callbackUrl: `${window.location.origin}`,
+                                        callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL == undefined ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL}`,
                                     });
                                 }}
                                 className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"
