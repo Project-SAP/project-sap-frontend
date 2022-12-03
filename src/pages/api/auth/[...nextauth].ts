@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import Config from './../../../utils/config';
 
 const authOptions: NextAuthOptions = {
     session: {
@@ -16,10 +17,7 @@ const authOptions: NextAuthOptions = {
                 };
                 // perform you login logic
                 // find out user from db
-                const backendURL: string =
-                    process.env.NEXT_PUBLIC_API_BASE_PATH == undefined
-                        ? 'http://localhost:8080'
-                        : process.env.NEXT_PUBLIC_API_BASE_PATH;
+                const backendURL = Config.BASE_API_PATH;
 
                 console.log(backendURL);
 

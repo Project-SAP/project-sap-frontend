@@ -7,6 +7,7 @@ import Chat from '../components/chat';
 import avatarMale from '../images/avatar/male.png';
 import { ChatMessage } from './../models/chatMessage';
 import SocketClientFactory from './../utils/socketClientFactory';
+import Config from './../utils/config';
 
 let socket: Socket;
 
@@ -159,7 +160,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
                             <button
                                 onClick={() => {
                                     signOut({
-                                        callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL == undefined ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL}`,
+                                        callbackUrl: `${Config.APP_URL}`,
                                     });
                                 }}
                                 className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"

@@ -4,6 +4,7 @@ import Header from '../components/header';
 import Link from 'next/link';
 import { getSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import Config from './../utils/config';
 
 const Login: NextPage = (props): JSX.Element => {
     const [email, setEmail] = useState('');
@@ -18,7 +19,7 @@ const Login: NextPage = (props): JSX.Element => {
         const payload = { email, password };
         const result = await signIn('credentials', {
             ...payload,
-            callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL == undefined ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL}/chat`,
+            callbackUrl: `${Config.APP_URL}/chat`,
         });
 
         // Credentials were valid
