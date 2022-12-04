@@ -15,6 +15,6 @@ export default class Config {
 
     public static APP_URL =
         process.env.NEXT_PUBLIC_APP_URL == undefined
-            ? window.location.origin
+            ? ''
             : process.env.NEXT_PUBLIC_APP_URL;
 }

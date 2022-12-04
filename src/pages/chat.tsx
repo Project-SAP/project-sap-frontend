@@ -14,6 +14,9 @@ let socket: Socket;
 const ChatPage: NextPage = (props): JSX.Element => {
     // TODO: Once username is properly implemented, remove use of email. It's only being used for debugging purposes
     const userName: string = useSession().data?.user?.name || useSession().data?.user?.email?.split('@')[0] || 'current user';
+    const callbackUrl: string = Config.APP_URL;
+    // tslint:disable-next-line:no-console
+    console.log(`APP_URL: ${callbackUrl}`);
 
     const [getReceivedMessage, setReceivedMessage]: [ChatMessage | undefined, React.Dispatch<React.SetStateAction<ChatMessage | undefined>>] = useState();
     const [getMessages, setMessages] = useState([] as ChatMessage[]);
@@ -160,7 +163,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
                             <button
                                 onClick={() => {
                                     signOut({
-                                        callbackUrl: `${Config.APP_URL}`,
+                                        callbackUrl
                                     });
                                 }}
                                 className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"

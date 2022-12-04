@@ -11,6 +11,9 @@ const Login: NextPage = (props): JSX.Element => {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const router = useRouter();
+    const callbackUrl = Config.APP_URL;
+    // tslint:disable-next-line:no-console
+    console.log(`APP_URL: ${callbackUrl}`);
 
     const loginHandler: FormEventHandler<HTMLFormElement> = async (e) => {
         // validate your userinfo before submission
@@ -19,7 +22,7 @@ const Login: NextPage = (props): JSX.Element => {
         const payload = { email, password };
         const result = await signIn('credentials', {
             ...payload,
-            callbackUrl: `${Config.APP_URL}/chat`,
+            callbackUrl: `${callbackUrl}/chat`,
         });
 
         // Credentials were valid
