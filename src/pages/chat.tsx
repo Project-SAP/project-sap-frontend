@@ -1,10 +1,118 @@
 import type { NextPage } from 'next';
+import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
-import avatarMale from '../images/avatar/male.png';
+import { useEffect, useRef, useState } from 'react';
+import { Socket } from 'socket.io-client';
 import Chat from '../components/chat';
-import ChatBox from '../components/chatbox';
+import avatarMale from '../images/avatar/male.png';
+import { ChatMessage } from './../models/chatMessage';
+import SocketClientFactory from './../utils/socketClientFactory';
+
+let socket: Socket;
 
 const ChatPage: NextPage = (props): JSX.Element => {
+    // TODO: Once username is properly implemented, remove use of email. It's only being used for debugging purposes
+    const userName: string = useSession().data?.user?.name || useSession().data?.user?.email?.split('@')[0] || 'current user';
+
+    const [getReceivedMessage, setReceivedMessage]: [ChatMessage | undefined, React.Dispatch<React.SetStateAction<ChatMessage | undefined>>] = useState();
+    const [getMessages, setMessages] = useState([] as ChatMessage[]);
+
+    useEffect(() => {
+        socket = SocketClientFactory.getNewInstance();
+
+        socket.on('connect', () => {
+            // tslint:disable-next-line:no-console
+            console.log(`Socket connected`);
+        });
+
+        socket.on('disconnect', () => {
+            // tslint:disable-next-line:no-console
+            console.log(`Socket disconnected`);
+        })
+
+        // Expecting to receive a `ChatMessage`
+        socket.on("message", (message: any) => {
+            const chatMessage: ChatMessage = {
+                source: message.sender,
+                content: message.message,
+                timestamp: new Date()
+            }
+            setReceivedMessage(chatMessage);
+        });
+
+        socket.on('match', (matchMessage: any) => {
+            setReceivedMessage({
+                content: matchMessage.message,
+                source: 'info',
+                timestamp: new Date()
+            });
+        });
+
+        socket.on('join', (joinMessage: any) => {
+            setReceivedMessage({
+                content: joinMessage.message,
+                source: 'info',
+                timestamp: new Date()
+            });
+        });
+
+        socket.on('error', (errorMessage: any) => {
+            setReceivedMessage({
+                content: errorMessage.message,
+                source: 'info',
+                timestamp: new Date()
+            });
+        });
+
+        return () => {
+            socket.off('connect');
+            socket.off('disconnect');
+            socket.off('message');
+            socket.off('match');
+            socket.off('join');
+            socket.off('error');
+        }
+    }, []);
+
+    useEffect(() => {
+        getReceivedMessage &&
+            setMessages((prevMessages) => [...prevMessages, getReceivedMessage]);
+    }, [getReceivedMessage]);
+
+    const { data: session } = useSession();
+
+
+    // Used later to scroll to the bottom of the chat window every time a user sends a message
+    const chatEnd: any = useRef();
+    const [chatText, setChatText] = useState('');
+
+    // If user is not authenticated
+    if (!session) return <p>Access Denied.</p>;
+
+    // Check if message is empty or just blank spaces
+    const messageValid = (txt: any) => txt && txt.replace(/\s/g, '').length;
+
+    // Submit the message if it is valid
+    const submitMessage = (e: any) => {
+        e.preventDefault();
+        if (messageValid(chatText)) {
+            // Message is valid, build chat message to send
+            const chatMessage: ChatMessage = {
+                source: userName,
+                content: chatText,
+                timestamp: new Date()
+            }
+
+            socket.emit('message', { sender: chatMessage.source, message: chatMessage.content });
+            setChatText('');
+            chatEnd.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    const joinQueue = (profile: string) => {
+        socket.emit('joinQueue', { name: userName, profile });
+    }
+
     return (
         <div>
             <div className="h-screen w-screen bg-gradient-to-r from-complementary to-dominant flex justify-center items-center">
@@ -12,7 +120,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
                     <div className="flex sm:items-center justify-between py-3 border-b-2 border-gray-200 pr-3">
                         <div className="relative flex items-center space-x-4">
                             <div className="relative pl-6 flex items-center">
-                                <div className="w-full h-full sm:w-16 sm:h-16 flex items-center">
+                                <div className="w-16 h-16 flex items-center">
                                     <Image
                                         src={avatarMale}
                                         alt="Male Avatar"
@@ -23,31 +131,40 @@ const ChatPage: NextPage = (props): JSX.Element => {
                             <div className="flex flex-col leading-tight">
                                 <div className="text-2xl mt-1 flex items-center">
                                     <span className="text-gray-700 mr-3">
-                                        StinkyGiraffe#7468
+                                        {userName}
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                            {/* Menu Button */}
+                            {/* TODO: Remove this button */}
                             <button
-                                type="button"
-                                className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
+                                onClick={() => {
+                                    joinQueue('venter');
+                                }}
+                                className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    className="w-6 h-6"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                                    />
-                                </svg>
+                                Enter queue as venter
+                            </button>
+                            {/* TODO: Remove this button */}
+                            <button
+                                onClick={() => {
+                                    joinQueue('listener');
+                                }}
+                                className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"
+                            >
+                                Enter queue as listener
+                            </button>
+                            {/* Sign Out Button */}
+                            <button
+                                onClick={() => {
+                                    signOut({
+                                        callbackUrl: `${window.location.origin}`,
+                                    });
+                                }}
+                                className="px-4 py-1 mr-3 text-white rounded bg-dominant hover:bg-accent"
+                            >
+                                Sign Out
                             </button>
                         </div>
                     </div>
@@ -57,105 +174,39 @@ const ChatPage: NextPage = (props): JSX.Element => {
                         id="messages"
                         className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
                     >
-                        <Chat user="sender">
-                            <ChatBox>Hey, can I talk to you?</ChatBox>
-                        </Chat>
+                        {/* If a message exists, add the latest message to the chat window */}
+                        {getMessages &&
+                            getMessages.map((chatMsg: ChatMessage, index: number) => (
+                                <Chat
+                                    user={
+                                        chatMsg.source == 'info' ? 'info' : chatMsg.source == userName ? 'sender' : 'receiver'
+                                    }
+                                    key={index}
+                                    message={chatMsg.content}
+                                />
+                            ))}
 
-                        <Chat user="receiver">
-                            <ChatBox>
-                                Yeah sure, what's going on? I'm here to listen.
-                            </ChatBox>
-                        </Chat>
-
-                        <Chat user="sender">
-                            <ChatBox>
-                                I haven't been feeling well lately.
-                            </ChatBox>
-                            <ChatBox>
-                                I have anxiety and depression and I can not keep
-                                up with my current semester schedule
-                            </ChatBox>
-                            <ChatBox>
-                                I have to maintain an A for my scholarship but
-                                that seems impossible right now.
-                            </ChatBox>
-                            <ChatBox>
-                                And thinking about that is causing me a lot of
-                                stress
-                            </ChatBox>
-                        </Chat>
-
-                        <Chat user="receiver">
-                            <ChatBox>
-                                Oh no! I'm so sorry to hear that. Have you tried
-                                contacting your instructors?
-                            </ChatBox>
-                        </Chat>
-
-                        <Chat user="sender">
-                            <ChatBox>
-                                No I have not, I don't think they are going to
-                                do anything
-                            </ChatBox>
-                        </Chat>
-
-                        <Chat user="receiver">
-                            <ChatBox>
-                                I can understand why you might feel that way. I
-                                used to be the same during my freshman year.
-                            </ChatBox>
-                            <ChatBox>
-                                But I started letting them know when I was in
-                                difficult circumstances and they were very
-                                understanding and helpful, you should definitely
-                                send them an email and explain your situation
-                            </ChatBox>
-                            <ChatBox>
-                                There's nothing to lose by doing that!
-                            </ChatBox>
-                        </Chat>
-
-                        <Chat user="sender">
-                            <ChatBox>Really?</ChatBox>
-                            <ChatBox>
-                                I had the assumption that professors at UK
-                                wouldn't be understanding
-                            </ChatBox>
-                        </Chat>
-
-                        <Chat user="receiver">
-                            <ChatBox>
-                                Yes! Many friends I know also had that
-                                assumption until they contacted their professors
-                            </ChatBox>
-                        </Chat>
-
-                        <Chat user="sender">
-                            <ChatBox>Got youuu?</ChatBox>
-                            <ChatBox>Thank you so much!</ChatBox>
-                            <ChatBox>
-                                I am going to try doing that, you have a good
-                                day.
-                            </ChatBox>
-                        </Chat>
-
-                        <Chat user="receiver">
-                            <ChatBox>You too!</ChatBox>
-                        </Chat>
+                        {/* Scroll the chat to the bottom of the chat window when a new message is sent */}
+                        <span ref={chatEnd}>&nbsp;</span>
                     </div>
                     {/* Messages Window End */}
 
-                    <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0 pb-3">
-                        <div className="relative flex">
+                    <div className="border-t-2 border-gray-200 px-4 pt-3 mb-2 sm:mb-0 pb-3">
+                        <form className="relative flex">
                             <input
+                                id="chatInput"
                                 type="text"
                                 placeholder="Write your message!"
-                                className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-6 bg-gray-200 rounded-md py-3"
+                                className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-6 bg-gray-200 rounded-md py-2"
+                                onChange={(e) => setChatText(e.target.value)}
+                                value={chatText}
                             />
-                            <div className="absolute right-0 items-center inset-y-0 flex">
+                            <div className="absolute right-0 items-center inset-y-0 flex bg-dominant hover:bg-black rounded-r-md">
                                 <button
-                                    type="button"
-                                    className="inline-flex items-center justify-center rounded-lg px-4 py-3 text-white hover:bg-black bg-gradient-to-tr from-complementary to-dominant focus:outline-none"
+                                    type="submit"
+                                    className="inline-flex items-center justify-center px-4 py-2 text-white bg-dominant hover:bg-black focus:outline-none rounded-r-md"
+                                    onClick={submitMessage}
+                                    disabled={!chatText}
                                 >
                                     <span className="font-bold ">Send</span>
                                     <svg
@@ -168,7 +219,7 @@ const ChatPage: NextPage = (props): JSX.Element => {
                                     </svg>
                                 </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
