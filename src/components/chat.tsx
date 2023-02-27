@@ -9,43 +9,41 @@ import avatarSender from '../images/avatar/female.png';
 const Chat = (props) => {
     return (
         <div>
-            {/* Sender Message */}
-            {props.user === 'sender' && (
-                <div className="chat-message">
-                    <div className="flex items-end">
-                        <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-                            {props.children}
-                        </div>
+            <div className="chat-message">
+                <div
+                    className={`flex items-end ${
+                        props.user === 'sender' ? '' : 'justify-end'
+                    }`}
+                >
+                    <div
+                        className={`flex flex-col space-y-2 text-sm md:text-sm lg:text-base 2xl:text-xl max-w-xs mx-2 ${
+                            props.user === 'sender'
+                                ? 'order-2 items-start'
+                                : 'order-1 items-end'
+                        }`}
+                    >
+                        <span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
+                            {props.message}
+                        </span>
+                    </div>
 
-                        <div className="w-6 h-6 rounded-full order-1 flex items-center ">
+                    <div className="w-6 h-6 rounded-full order-1 flex items-center">
+                        {props.user === 'sender' ? (
                             <Image
                                 src={avatarSender}
                                 alt="Female Avatar"
                                 className="avatar"
                             />
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Receiver Message */}
-            {props.user === 'receiver' && (
-                <div className="chat-message">
-                    <div className="flex items-end justify-end">
-                        <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-                            {props.children}
-                        </div>
-
-                        <div className="w-6 h-6 rounded-full order-1 flex items-center">
+                        ) : (
                             <Image
                                 src={avatarReceiver}
                                 alt="Male Avatar"
                                 className="avatar"
                             />
-                        </div>
+                        )}
                     </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 };
